@@ -9,6 +9,7 @@ Description: deep common functions
 #ifndef _DEEP_COMMON_H
 #define _DEEP_COMMON_H
 
+void deep_send_buf (const char * buffer, int len);
 void deep_printf (const char *format, ...);
 void log_printf (const char* pFileName, unsigned int uiLine, const char* pFuncName,char *LogFmtBuf, ...);
 void log_data(const char *pFileName, unsigned int uiLine, const char* pFuncName, const char *pcStr,unsigned char *pucBuf,unsigned int usLen);

@@ -54,20 +54,6 @@ static void uart0Init (void) {
     uart_driver_install(UART_NUM_0, BUF_SIZE * 2, 0, 0, NULL, 0);
 }
 
-static void Uart0Recv(void *arg)
-{
-    // Configure a temporary buffer for the incoming data
-    uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
-    while (1) {
-        // Read data from the UART
-        int len = uart_read_bytes(UART_NUM_0, data, BUF_SIZE, 20 / portTICK_RATE_MS);
-        if(len > 0)
-          uart_write_bytes(UART_NUM_0, (const char *) "uart0:", strlen("uart0:"));
-        // Write data back to the UART
-        uart_write_bytes(UART_NUM_0, (const char *) data, len);
-    }
-}
-
 static void deepvm_uart_process_task(void *arg)
 {
     // Configure a temporary buffer for the incoming data
@@ -80,7 +66,7 @@ static void deepvm_uart_process_task(void *arg)
                 deep_dstp_datain (data[i]);
             }
         } else {
-            vTaskDelay (50);
+            vTaskDelay (10);
         }
     }
 }
@@ -88,39 +74,6 @@ static void deepvm_uart_process_task(void *arg)
 static void deepvm_dstp_task (void *arg) {
     while (1) {
         deep_dstp_process ();
-    }
-}
-
-static int count = 0;
-static void parser_task(void *arg)
-{
-    while (1) {
-        deep_printf("Deep parser run %d seconds...\n", count++);
-        vTaskDelay(100);
-    }
-}
-
-static void wasm_vm_task(void *arg)
-{
-    while (1) {
-        deep_printf("Deep wasm vm run %d seconds...\n", count++);
-        vTaskDelay(100);
-    }
-}
-
-static void event_manager_task(void *arg)
-{
-    while (1) {
-        deep_printf("Event manager run %d seconds...\n", count++);
-        vTaskDelay(100);
-    }
-}
-
-static void uart_file_manager_task(void *arg)
-{
-    while (1) {
-        deep_printf("Uart file manager run %d seconds...\n", count++);
-        vTaskDelay(100);
     }
 }
 
@@ -143,12 +96,6 @@ void app_main(void)
     /* Deepvm start */
     deep_printf ("Deepvm for deeplang 0.1\r\n");
     deep_printf ("Deepvm includes parser, wasm vm, event manager, uart file manager\r\n");
-    //xTaskCreate(parser_task, "parser_task", 2048, NULL, 10, NULL);
-    //xTaskCreate(wasm_vm_task, "wasm_vm_task", 2048, NULL, 10, NULL);
-    //xTaskCreate(event_manager_task, "event_manager_task", 2048, NULL, 12, NULL);
-    //xTaskCreate(uart_file_manager_task, "uart_file_manager_task", 2048, NULL, 12, NULL);
-    //xTaskCreate(uart0_rx_task, "uart0_rx_task", 2048, NULL, 10, NULL);
-    //xTaskCreate(Uart0Recv, "uart_echo_task", 2048, NULL, 10, NULL);
-    xTaskCreate(deepvm_uart_process_task, "deepvm_uart_process_task", 2048, NULL, 10, NULL);
-    xTaskCreate(deepvm_dstp_task, "deepvm_dstp_task", 2048, NULL, 12, NULL);
+    xTaskCreate(deepvm_uart_process_task, "deepvm_uart_process_task", 4096, NULL, 10, NULL);
+    xTaskCreate(deepvm_dstp_task, "deepvm_dstp_task", 4096, NULL, 12, NULL);
 }

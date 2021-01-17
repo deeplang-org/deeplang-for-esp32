@@ -13,6 +13,9 @@ Description: deep common functions
 #include "deep_common.h"
 
 #define LINE_MAX (120)
+void deep_send_buf (const char * buffer, int len) {
+    return uart_write_bytes(UART_NUM_0, buffer, len);
+}
 
 void deep_printf (const char *format, ...)
 {
@@ -122,4 +125,5 @@ void deep_free (void *p) {
         return;
     }
     free(p);
+    p = NULL;
 }
