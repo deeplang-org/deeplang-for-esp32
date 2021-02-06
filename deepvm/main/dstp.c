@@ -154,7 +154,7 @@ static void Process_send_frame(unsigned char cmd, unsigned char *payload, int le
     data[1] = ((frame.len) & 0xFF);;
     deep_printf ("%02x%02x", data[0], data[1]);
     for (int i= 0; i < frame.len; i++) {
-        deep_printf ("%02X", frame.payload[i]);
+        deep_printf ("%02x", frame.payload[i]);
     }
     deep_printf ("%02x%02x", frame.tail[0], frame.tail[1]);
     deep_printf ("%02x", frame.sum);
